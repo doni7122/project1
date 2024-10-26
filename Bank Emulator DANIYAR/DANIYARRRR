@@ -1,0 +1,98 @@
+using System;
+using System.Collections.Generic;
+
+namespace BankEmulator
+{
+    // Класс для представления банковского счета
+    public class Account
+    {
+        // Свойства для хранения номера счета, имени владельца и баланса
+        public string AccountNumber { get; private set; }
+        public string AccountHolder { get; private set; }
+        public decimal Balance { get; private set; }
+
+        // Конструктор класса, который инициализирует счет
+        public Account(string accountHolder, string accountNumber)
+        {
+            AccountHolder = accountHolder;
+            AccountNumber = accountNumber;
+            Balance = 0;
+        }
+
+        // Метод для внесения средств на счет
+        public void Deposit(decimal amount)
+        {
+            if (amount > 0)
+            {
+                Balance += amount;
+                Console.WriteLine($"Внесено: {amount}, Текущий баланс: {Balance}");
+            }
+            else
+            {
+                Console.WriteLine("Сумма должна быть положительной.");
+            }
+        }
+
+        // Метод для снятия средств со счета
+        public void Withdraw(decimal amount)
+        {
+            if (amount > Balance)
+            {
+                Console.WriteLine("Недостаточно средств для снятия.");
+            }
+            else
+            {
+                Balance -= amount;
+                Console.WriteLine($"Снято: {amount}, Остаток на счете: {Balance}");
+            }
+        }
+
+        // Метод для получения текущего баланса
+        public decimal GetBalance()
+        {
+            return Balance;
+        }
+    }
+
+    // Класс для управления счетами в банке
+    public class Bank
+    {
+        private List<Account> accounts = new List<Account>(); // Список для хранения всех счетов
+
+        // Метод для создания нового счета
+        public Account CreateAccount(string accountHolder, string accountNumber)
+        {
+            var newAccount = new Account(accountHolder, accountNumber);
+            accounts.Add(newAccount);
+            Console.WriteLine($"Создан новый счет для {accountHolder} с номером {accountNumber}.");
+            return newAccount;
+        }
+
+        // Метод для поиска счета по номеру
+        public Account GetAccount(string accountNumber)
+        {
+            return accounts.Find(a => a.AccountNumber == accountNumber);
+        }
+    }
+
+    // Основной класс программы
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Bank bank = new Bank(); // Создаем экземпляр банка
+
+            // Создаем новый счет
+            var account = bank.CreateAccount("Alice", "123456");
+
+            // Выполняем операции с аккаунтом
+            account.Deposit(1000); // Вносим деньги
+            account.Withdraw(500);  // Снимаем деньги
+            Console.WriteLine($"Текущий баланс: {account.GetBalance()}"); // Проверяем баланс
+
+            // Примеры ошибок
+            account.Withdraw(600); // Попытка снять больше, чем на счете
+            account.Deposit(-200); // Попытка внести отрицательную сумму
+        }
+    }
+}
